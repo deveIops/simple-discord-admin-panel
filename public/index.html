@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panneau d'Administration Discord</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="login-container" class="container">
+    <h1>Panneau d'Administration Discord</h1>
+    <form id="connect-form">
+      <label for="token">Jeton</label>
+      <input type="text" id="token" name="token" required>
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <div id="dashboard-container" class="dashboard-container" style="display: none;">
+    <nav class="sidebar">
+      <ul>
+        <li class="menu-item" data-section="users">Utilisateurs</li>
+        <li class="menu-item" data-section="roles">Rôles</li>
+        <li class="menu-item" data-section="servers">Serveurs</li>
+        <div id="logout" class="logout-button">Se déconnecter</div>
+        <button id="theme-toggle" class="menu-item">Changer le thème</button>
+      </ul>
+    </nav>
+    <main class="content">
+      <div id="users" class="section">
+        <h2>Utilisateurs</h2>
+        <div id="users-list"></div>
+      </div>
+      <div id="roles" class="section">
+        <h2>Rôles</h2>
+        <div id="roles-list"></div>
+      </div>
+      <div id="servers" class="section">
+        <h2>Serveurs</h2>
+        <div id="servers-list"></div>
+      </div>
+      <div id="settings" class="section">
+        <div id="settings-container"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="popup" class="popup">
+    <div id="popup-content" class="popup-content">
+      <h3></h3>
+    </div>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

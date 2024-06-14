@@ -1,4 +1,4 @@
-# 🛠️ Panneau Discord
+# 🛠️ Panel BOT Discord
 
 ## 📚 Description
 

@@ -27,3 +27,4 @@ document.addEventListener('DOMContentLoaded', () => {
       botInfoContainer.innerHTML = `<p>${error.message}</p>`;
     }
   })
+});

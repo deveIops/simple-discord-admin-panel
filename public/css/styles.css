@@ -1,6 +1,6 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f2f5;
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -12,8 +12,8 @@ body {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   text-align: center;
   position: absolute;
@@ -24,6 +24,7 @@ body {
 
 h1 {
   text-align: center;
+  color: #333;
 }
 
 form {
@@ -36,17 +37,33 @@ input, button {
   margin: 5px 0;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 16px;
+}
+
+input {
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 button {
-  background-color: #28a745;
+  background-color: #007bff;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 button:hover {
-  background-color: #218838;
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 .dashboard-container {
@@ -55,8 +72,8 @@ button:hover {
 }
 
 .sidebar {
-  width: 200px;
-  background-color: #333;
+  width: 220px;
+  background-color: #343a40;
   color: white;
   display: flex;
   flex-direction: column;
@@ -64,30 +81,48 @@ button:hover {
   padding: 20px;
   height: 100vh;
   overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .sidebar ul {
   list-style-type: none;
   padding: 0;
+  width: 100%;
+  flex-grow: 1;
 }
 
 .sidebar .menu-item {
-  padding: 10px;
-  margin: 5px 0;
+  padding: 15px;
+  margin: 10px 0;
   width: 100%;
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
 }
 
 .sidebar .menu-item:hover {
-  background-color: #444;
+  background-color: #495057;
+  transform: translateX(5px);
+}
+
+.sidebar .menu-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
 }
 
 .content {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
+  background-color: #f8f9fa;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .section {
@@ -102,18 +137,26 @@ button:hover {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
 .item-card {
-  background: white;
+  background: #ffffff;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
   margin: 10px 0;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.item-card:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .server-section {
@@ -121,12 +164,17 @@ button:hover {
 }
 
 .server-title {
-  background-color: #333;
+  background-color: #343a40;
   color: white;
   padding: 10px;
   margin: 0;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.server-title:hover {
+  background-color: #495057;
 }
 
 .server-content {
@@ -157,14 +205,15 @@ button:hover {
 .search-bar button {
   padding: 5px;
   border: none;
-  background-color: #333;
+  background-color: #343a40;
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .search-bar button:hover {
-  background-color: #444;
+  background-color: #495057;
 }
 
 .action-buttons button {
@@ -174,6 +223,7 @@ button:hover {
   border-radius: 4px;
   cursor: pointer;
   color: white;
+  transition: background-color 0.3s ease;
 }
 
 .action-buttons .ban-button {
@@ -182,6 +232,14 @@ button:hover {
 
 .action-buttons .kick-button {
   background-color: #e67e22;
+}
+
+.action-buttons .delete-button {
+  background-color: #dc3545;
+}
+
+.action-buttons .rename-button {
+  background-color: #007bff;
 }
 
 .action-buttons button:hover {
@@ -194,7 +252,7 @@ button:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -212,10 +270,12 @@ button:hover {
   text-align: center;
   max-width: 300px;
   width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .popup-content h3 {
   margin-bottom: 20px;
+  color: #333;
 }
 
 .popup-content button {
@@ -261,30 +321,24 @@ button:hover {
   color: #721c24;
 }
 
-.action-buttons .delete-button {
-  background-color: #dc3545;
-  color: white;
-}
-
-.action-buttons .rename-button {
-  background-color: #007bff;
-  color: white;
-}
-
 .logout-button {
-  border: 2px solid red;
-  background-color: white;
-  color: red;
+  border: none;
+  background-color: #e74c3c;
+  color: white;
   padding: 10px 20px;
   text-align: center;
   cursor: pointer;
   margin-top: 20px;
-  display: inline-block;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  position: absolute;
+  bottom: 20px;
+  width: calc(100% - 40px); /* Ajuste la largeur pour tenir compte du padding */
 }
 
 .logout-button:hover {
-  background-color: red;
-  color: white;
+  background-color: #c0392b;
+  transform: translateY(-2px);
 }
 
 body.light-mode {

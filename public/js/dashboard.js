@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const popup = document.getElementById('popup');
   const popupContent = document.getElementById('popup-content');
   const dmallStatus = document.getElementById('dmall-status');
-  const themeToggle = document.getElementById('theme-toggle');
   
   let currentAction = null;
   let currentServer = null;
@@ -46,13 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           displayServers(serversData);
         }
+      } else if (item.getAttribute('data-section') === 'logs') {
+        fetchLogs();
       }
     });
-  });
-
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    document.body.classList.toggle('light-mode');
   });
 
   document.getElementById('logout').addEventListener('click', () => {
@@ -101,14 +97,27 @@ document.addEventListener('DOMContentLoaded', () => {
     dmallStatus.scrollTop = dmallStatus.scrollHeight; // Scroll to the bottom
   }
 
+  function fetchWithRetry(url, options, maxRetries = 3) {
+    return fetch(url, options)
+      .then(response => response.json())
+      .then(data => {
+        if (data.message && data.message.includes('rate limited')) {
+          const retryAfter = data.retry_after * 1000;
+          console.warn(`Rate limited. Retrying after ${retryAfter}ms...`);
+          return new Promise((resolve) => setTimeout(resolve, retryAfter))
+            .then(() => fetchWithRetry(url, options, maxRetries - 1));
+        }
+        return data;
+      });
+  }
+
   function fetchUsers() {
     const token = localStorage.getItem('discordBotToken');
-    fetch('/api/users', {
+    fetchWithRetry('/api/users', {
       headers: {
         Authorization: `Bot ${token}`
       }
     })
-    .then(response => response.json())
     .then(data => {
       usersData = data;
       displayUsers(usersData);
@@ -205,16 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function fetchRoles() {
-    console.log('Fetching roles...');
     const token = localStorage.getItem('discordBotToken');
-    fetch('/api/roles', {
+    fetchWithRetry('/api/roles', {
       headers: {
         Authorization: `Bot ${token}`
       }
     })
-    .then(response => response.json())
     .then(data => {
-      console.log('Roles fetched:', data);
       rolesData = data;
       displayRoles(rolesData);
     })
@@ -222,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function displayRoles(data) {
-    console.log('Displaying roles:', data);
     const rolesList = document.getElementById('roles-list');
     rolesList.innerHTML = '';
     const servers = {};
@@ -306,12 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function fetchServers() {
     const token = localStorage.getItem('discordBotToken');
-    fetch('/api/servers', {
+    fetchWithRetry('/api/servers', {
       headers: {
         Authorization: `Bot ${token}`
       }
     })
-    .then(response => response.json())
     .then(data => {
       serversData = data;
       displayServers(serversData);
@@ -345,6 +349,58 @@ document.addEventListener('DOMContentLoaded', () => {
       serverDiv.appendChild(actionButtons);
       serversList.appendChild(serverDiv);
     });
+  }
+
+  function fetchLogs() {
+    const token = localStorage.getItem('discordBotToken');
+    fetchWithRetry('/api/servers', {
+      headers: {
+        Authorization: `Bot ${token}`
+      }
+    })
+    .then(data => {
+      displayLogServers(data);
+    })
+    .catch(error => console.error('Erreur lors de la récupération des logs:', error));
+  }
+
+  function displayLogServers(servers) {
+    const logsList = document.getElementById('logs-list');
+    logsList.innerHTML = '';
+    servers.forEach(server => {
+      const serverDiv = document.createElement('div');
+      serverDiv.classList.add('item-card');
+      serverDiv.textContent = server.name;
+      serverDiv.addEventListener('click', () => fetchLogDetails(server.id, server.name));
+      logsList.appendChild(serverDiv);
+    });
+  }
+
+  function fetchLogDetails(serverId, serverName) {
+    const token = localStorage.getItem('discordBotToken');
+    fetchWithRetry(`/api/logs/${serverId}`, {
+      headers: {
+        Authorization: `Bot ${token}`
+      }
+    })
+    .then(data => {
+      displayLogDetails(serverName, data);
+    })
+    .catch(error => console.error('Erreur lors de la récupération des détails des logs:', error));
+  }
+
+  function displayLogDetails(serverName, logs) {
+    const logDetails = document.getElementById('log-details');
+    const logEntries = document.getElementById('log-entries');
+    document.getElementById('server-name').textContent = serverName;
+    logEntries.innerHTML = '';
+    logs.forEach(log => {
+      const logEntry = document.createElement('div');
+      logEntry.classList.add('log-entry');
+      logEntry.textContent = `${log.timestamp}: ${log.message}`;
+      logEntries.appendChild(logEntry);
+    });
+    logDetails.style.display = 'block';
   }
 
   function showPopup(action, item) {
@@ -485,7 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const actionEndpoint = currentAction === 'ban' ? '/api/ban' : currentAction === 'kick' ? '/api/kick' : currentAction === 'leave' ? '/api/leave' : null;
       const actionText = currentAction === 'ban' ? 'banni' : currentAction === 'kick' ? 'expulsé' : 'quitté';
 
-      fetch(actionEndpoint, {
+      fetchWithRetry(actionEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -496,7 +552,6 @@ document.addEventListener('DOMContentLoaded', () => {
           userId: currentUser ? currentUser.user.id : null
         })
       })
-      .then(response => response.json())
       .then(data => {
         if (data.message.includes('successfully')) {
           alert(`L'utilisateur ${currentUser.user.username}#${currentUser.user.discriminator} a été ${actionText}!`);
@@ -512,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renameUser(user, newName) {
     const token = localStorage.getItem('discordBotToken');
-    fetch('/api/rename', {
+    fetchWithRetry('/api/rename', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -524,7 +579,6 @@ document.addEventListener('DOMContentLoaded', () => {
         newName: newName
       })
     })
-    .then(response => response.json())
     .then(data => {
       if (data.message === 'User renamed successfully') {
         alert(`L'utilisateur ${user.user.username}#${user.user.discriminator} a été renommé en ${newName}!`);
@@ -538,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetUserName(user) {
     const token = localStorage.getItem('discordBotToken');
-    fetch('/api/rename', {
+    fetchWithRetry('/api/rename', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -550,7 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
         newName: ''
       })
     })
-    .then(response => response.json())
     .then(data => {
       if (data.message === 'User renamed successfully') {
         alert(`Le pseudo de l'utilisateur ${user.user.username}#${user.user.discriminator} a été réinitialisé!`);
@@ -563,34 +616,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function sendDmToAll(server, message) {
-    const token = localStorage.getItem('discordBotToken');
-    fetch('/api/dmall', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        token: token,
-        guildId: server.id,
-        message: message
+    checkPermissions(server, () => {
+      const token = localStorage.getItem('discordBotToken');
+      fetchWithRetry('/api/dmall', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          token: token,
+          guildId: server.id,
+          message: message
+        })
       })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message === 'Messages sent') {
-        alert(`Message envoyé à tous les membres de ${server.name}`);
-        dmallStatus.innerHTML = '<h3>DMALL en cours...</h3>';
-      } else {
-        alert(`Échec de l'envoi des messages à tous les membres de ${server.name}`);
-      }
-    })
-    .catch(error => console.error('Erreur lors de envoi des messages:', error));
-    closePopup();
+      .then(data => {
+        if (data.message === 'Messages sent') {
+          alert(`Message envoyé à tous les membres de ${server.name}`);
+          dmallStatus.innerHTML = '<h3>DMALL en cours...</h3>';
+        } else if (data.code === 50001) {
+          alert('Erreur: Accès manquant. Assurez-vous que le bot a les permissions nécessaires pour envoyer des messages.');
+        } else {
+          alert(`Échec de l'envoi des messages à tous les membres de ${server.name}`);
+        }
+      })
+      .catch(error => console.error('Erreur lors de envoi des messages:', error));
+      closePopup();
+    });
   }
 
   function deleteRole(role) {
     const token = localStorage.getItem('discordBotToken');
-    fetch('/api/role/delete', {
+    fetchWithRetry('/api/role/delete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -601,7 +657,6 @@ document.addEventListener('DOMContentLoaded', () => {
         roleId: role.id
       })
     })
-    .then(response => response.json())
     .then(data => {
       if (data.message === 'Role deleted successfully') {
         alert(`Le rôle ${role.name} a été supprimé!`);
@@ -616,7 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renameRole(role, newName) {
     const token = localStorage.getItem('discordBotToken');
-    fetch('/api/role/rename', {
+    fetchWithRetry('/api/role/rename', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -628,7 +683,6 @@ document.addEventListener('DOMContentLoaded', () => {
         newName: newName
       })
     })
-    .then(response => response.json())
     .then(data => {
       if (data.message === 'Role renamed successfully') {
         alert(`Le rôle ${role.name} a été renommé en ${newName}!`);
@@ -644,4 +698,35 @@ document.addEventListener('DOMContentLoaded', () => {
   function closePopup() {
     popup.classList.remove('active');
   }
+
+  function checkPermissions(server, callback) {
+    const token = localStorage.getItem('discordBotToken');
+    fetchWithRetry(`/api/check-permissions/${server.id}`, {
+      headers: {
+        Authorization: `Bot ${token}`
+      }
+    })
+    .then(data => {
+      if (data.hasPermission) {
+        callback();
+      } else {
+        alert('Erreur: Accès manquant. Assurez-vous que le bot a les permissions nécessaires pour envoyer des messages.');
+      }
+    })
+    .catch(error => console.error('Erreur lors de la vérification des permissions:', error));
+  }
 });
+
+function fetchWithRetry(url, options, maxRetries = 3) {
+  return fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      if (data.message && data.message.includes('rate limited')) {
+        const retryAfter = data.retry_after * 1000;
+        console.warn(`Rate limited. Retrying after ${retryAfter}ms...`);
+        return new Promise((resolve) => setTimeout(resolve, retryAfter))
+          .then(() => fetchWithRetry(url, options, maxRetries - 1));
+      }
+      return data;
+    });
+}

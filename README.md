@@ -20,6 +20,6 @@ Le Panneau d'Administration Discord est une application web conçue pour gérer 
    npm install
    npm start
 
-__⚠️ Important :__ Le serveur démarrera par défaut sur le port 3000. Ouvrez votre navigateur et naviguez vers [http://localhost:3000](http://localhost:3000).
+__⚠️ Important :__ Le serveur démarrera par défaut sur le port 3000. Ouvrez votre navigateur et naviguez vers : http://localhost:3000
 
 ![Admin Panel GIF](./panel.gif)

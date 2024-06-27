@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panneau d'Administration Discord</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <div id="login-container" class="container">
     <h1>Panneau d'Administration Discord</h1>
     <form id="connect-form">
-      <label for="token">Jeton</label>
+      <label for="token">Token</label>
       <input type="text" id="token" name="token" required>
       <button type="submit">Se connecter</button>
     </form>
@@ -19,12 +19,16 @@
   <div id="dashboard-container" class="dashboard-container" style="display: none;">
     <nav class="sidebar">
       <ul>
-        <li class="menu-item" data-section="users">Utilisateurs</li>
-        <li class="menu-item" data-section="roles">Rôles</li>
-        <li class="menu-item" data-section="servers">Serveurs</li>
-        <div id="logout" class="logout-button">Se déconnecter</div>
-        <button id="theme-toggle" class="menu-item">Changer le thème</button>
-      </ul>
+        <li class="menu-item" data-section="users">
+          <img src="https://i.imgur.com/wT5SGmi.png" alt="Utilisateurs" class="menu-icon"> Utilisateurs
+        </li>
+        <li class="menu-item" data-section="roles">
+          <img src="https://i.imgur.com/EJkYMOT.png" alt="Rôles" class="menu-icon"> Rôles
+        </li>
+        <li class="menu-item" data-section="servers">
+          <img src="https://i.imgur.com/gYvIYgM.png" alt="Serveurs" class="menu-icon"> Serveurs
+        </li>
+      <div id="logout" class="logout-button">Se déconnecter</div>
     </nav>
     <main class="content">
       <div id="users" class="section">
@@ -39,6 +43,14 @@
         <h2>Serveurs</h2>
         <div id="servers-list"></div>
       </div>
+      <div id="logs" class="section">
+        <h2>Logs</h2>
+        <div id="logs-list"></div>
+        <div id="log-details" style="display: none;">
+          <h3>Logs pour le serveur : <span id="server-name"></span></h3>
+          <div id="log-entries"></div>
+        </div>
+      </div>
       <div id="settings" class="section">
         <div id="settings-container"></div>
       </div>
@@ -51,6 +63,6 @@
     </div>
   </div>
 
-  <script src="js/dashboard.js"></script>
+  <script src="/js/dashboard.js"></script>
 </body>
 </html>

@@ -25,4 +25,4 @@ Le serveur démarrera par défaut sur le port 3000. Ouvrez votre navigateur et n
 
 
 ````
-![Admin Panel GIF](./panel.gif)
+![Admin Panel Mov](./panel.mov)

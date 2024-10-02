@@ -6,8 +6,11 @@ Le Panneau d'Administration Discord est une application web conçue pour gérer 
 
 
 ⭐ Fonctionnalités
+
 👤 Gestion des Utilisateurs : Afficher, bannir, expulser et renommer les utilisateurs.
+
 🛡️ Gestion des Rôles : Afficher, supprimer et renommer les rôles.
+
 🌐 Gestion des Serveurs : Afficher les serveurs, quitter les serveurs et envoyer des messages directs à tous les membres [DMALL].
 
 

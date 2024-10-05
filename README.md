@@ -32,4 +32,7 @@ npm start
 Le serveur démarrera par défaut sur le port 3000.
 Ouvrez votre navigateur et naviguez vers : http://localhost:3000
 
-```` 
+````
+
+![Exemple](https://github.com/deveIops/simple-discord-admin-panel/blob/main/panel.gif)
+
